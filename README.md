@@ -1,5 +1,3 @@
-# Civix
-
 # Civix â€“ AI-Powered Residential Society Management System
 
 > A full-stack, production-ready web application for apartment complexes, gated communities, and residential societies. Civix centralises complaint management, notices, maintenance tracking, and resident engagement with an AI-powered complaint analysis service.
@@ -277,7 +275,7 @@ The AI uses **keyword-based TF-IDF similarity** and rule-based classification â€
 - Full dashboard with financial and operational KPIs
 - Manage all residents (add, update, deactivate)
 - Manage and update all complaints (assign, resolve, close)
-- Create, publish, pin, and delete notices
+- Create, publish, pin and delete notices
 - Create monthly maintenance charges for all residents
 - Record payments and track dues
 - View reports and analytics summary
