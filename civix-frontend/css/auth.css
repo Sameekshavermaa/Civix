@@ -1,0 +1,167 @@
+/* ============================================================
+   Civix – Auth Page CSS
+   ============================================================ */
+
+.auth-body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e1b4b 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    font-family: var(--font);
+}
+
+.auth-wrapper {
+    width: 100%;
+    max-width: 460px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.auth-card {
+    background: rgba(255,255,255,0.97);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.35);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Brand */
+.auth-brand {
+    padding: 32px 32px 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #f0f9ff 0%, #ede9fe 100%);
+    border-bottom: 1px solid var(--border);
+}
+.brand-logo {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 18px;
+    display: grid; place-items: center;
+    margin: 0 auto 12px;
+    font-size: 28px; color: #fff;
+    box-shadow: 0 8px 20px rgba(37,99,235,0.3);
+}
+.brand-name {
+    font-size: 1.9rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+}
+.brand-tagline {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    letter-spacing: 0.04em;
+}
+
+/* Tabs */
+.auth-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+}
+.auth-tab {
+    flex: 1;
+    padding: 13px 20px;
+    background: transparent;
+    border: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    border-bottom: 2px solid transparent;
+}
+.auth-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    background: rgba(37,99,235,0.04);
+}
+.auth-tab:hover:not(.active) { background: var(--bg); }
+
+/* Form */
+.auth-form { padding: 24px 28px 28px; }
+
+.input-password-wrap { position: relative; }
+.input-password-wrap .form-input { padding-right: 42px; }
+.toggle-password {
+    position: absolute; right: 11px; top: 50%;
+    transform: translateY(-50%);
+    background: transparent; border: none;
+    color: var(--text-muted); font-size: 0.88rem;
+    padding: 4px; cursor: pointer;
+    transition: color 0.2s;
+}
+.toggle-password:hover { color: var(--text-primary); }
+
+#loginBtn, #registerBtn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    border-radius: var(--radius-sm);
+    margin-top: 4px;
+}
+.btn-spinner { display: inline-flex; align-items: center; gap: 7px; }
+
+/* Demo creds */
+.auth-demo-creds {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--border);
+}
+.demo-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 10px;
+}
+.demo-creds-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+.demo-btn {
+    padding: 9px 14px;
+    background: var(--surface-2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex; align-items: center; gap: 6px; justify-content: center;
+}
+.demo-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+
+/* Features bar */
+.auth-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.feature-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius-sm);
+    color: rgba(255,255,255,0.85);
+    font-size: 0.8rem;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+}
+.feature-item i { font-size: 1rem; color: #93c5fd; flex-shrink: 0; }
+
+@media (max-width: 520px) {
+    .auth-form { padding: 20px 20px 24px; }
+    .auth-brand { padding: 24px 20px 16px; }
+    .auth-features { grid-template-columns: 1fr; }
+}

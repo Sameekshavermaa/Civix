@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civix – Dashboard</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="app-layout">
+
+    <!-- ══ SIDEBAR ══════════════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="fa-solid fa-building-columns"></i></div>
+            <div class="brand-text"><h2>Civix</h2><span>Society Management</span></div>
+        </div>
+
+        <div class="sidebar-user">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-name"   id="userName">Loading...</div>
+            <span class="user-role" id="userRoleBadge">—</span>
+        </div>
+
+        <nav class="sidebar-nav" id="sidebarNav"></nav>
+
+        <div class="sidebar-footer">
+            <button class="btn-logout" id="logoutBtn">
+                <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- ══ MAIN CONTENT ═════════════════════════════════════════ -->
+    <div class="main-content" id="mainContent">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <button class="topbar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+            <div>
+                <div class="topbar-title" id="topbarTitle">Dashboard</div>
+                <div class="topbar-subtitle" id="topbarSubtitle">Green Valley Apartments</div>
+            </div>
+            <div class="topbar-actions">
+                <button class="topbar-btn" title="Notifications"><i class="fa-solid fa-bell"></i><span class="notif-dot"></span></button>
+                <button class="topbar-btn" title="Settings"><i class="fa-solid fa-gear"></i></button>
+            </div>
+        </header>
+
+        <!-- Pages Container -->
+        <main class="page-content">
+
+            <!-- ════════════ DASHBOARD PAGE ════════════ -->
+            <div class="page active" id="page-dashboard">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Welcome back, <span id="dashWelcomeName">—</span> 👋</h1>
+                        <p>Here's what's happening in your society today.</p>
+                    </div>
+                    <div id="dashHeaderActions"></div>
+                </div>
+                <div class="stats-grid" id="dashboardStats">
+                    <div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-spinner fa-spin"></i></div><div class="stat-info"><div class="stat-value">—</div><div class="stat-label">Loading...</div></div></div>
+                </div>
+                <div class="grid-2" style="margin-top:24px">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-file-circle-exclamation" style="color:var(--danger);margin-right:6px"></i>Recent Complaints</h3>
+                        </div>
+                        <div class="card-body" style="padding:0">
+                            <div class="table-wrapper">
+                                <table class="data-table">
+                                    <thead><tr><th>No.</th><th>Title</th><th>Status</th><th>Priority</th><th>Time</th></tr></thead>
+                                    <tbody id="recentComplaintsBody"><tr><td colspan="5" class="text-muted" style="text-align:center;padding:20px">Loading...</td></tr></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-bullhorn" style="color:var(--primary);margin-right:6px"></i>Active Notices</h3>
+                        </div>
+                        <div class="card-body" id="recentNoticesContainer">
+                            <div class="text-muted text-sm">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════════════ ADMIN: RESIDENTS PAGE ════════════ -->
+            <div class="page" id="page-residents">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Residents</h1>
+                        <p>Manage society residents and their information.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddResident()">
+                        <i class="fa-solid fa-user-plus"></i> Add Resident
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="filters-bar" style="margin:0;flex:1">
+                            <input type="text" class="form-input search-input" id="searchResident" placeholder="Search by name, unit or email..." oninput="filterResidents()">
+                            <select class="form-select" id="filterOccupancy" onchange="filterResidents()">
+                                <option value="">All Types</option>
+                                <option value="OWNER">Owner</option>
+                                <option value="TENANT">Tenant</option>
+                            </select>
+                            <select class="form-select" id="filterActive" onchange="filterResidents()">
+                                <option value="">All Status</option>
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead><tr><th>Resident</th><th>Unit</th><th>Phone</th><th>Type</th><th>Move-In</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody id="residentsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════════════ ADMIN: COMPLAINTS PAGE ════════════ -->
+            <div class="page" id="page-complaints">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Complaints</h1>
+                        <p>Manage and resolve resident complaints.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="filters-bar" style="margin:0;flex:1">
+                            <input type="text" class="form-input search-input" id="searchComplaint" placeholder="Search complaints..." oninput="filterComplaints()">
+                            <select class="form-select" id="filterStatus" onchange="filterComplaints()">
+                                <option value="">All Status</option>
+                                <option value="OPEN">Open</option>
+                                <option value="IN_PROGRESS">In Progress</option>
+                                <option value="RESOLVED">Resolved</option>
+                                <option value="CLOSED">Closed</option>
+                                <option value="REJECTED">Rejected</option>
+                            </select>
+                            <select class="form-select" id="filterCategory" onchange="filterComplaints()">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead><tr><th>No.</th><th>Complaint</th><th>Category</th><th>Status</th><th>Priority</th><th>AI Tag</th><th>Date</th><th>Actions</th></tr></thead>
+                            <tbody id="complaintsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════════════ RESIDENT: MY COMPLAINTS PAGE ════════════ -->
+            <div class="page" id="page-my-complaints">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>My Complaints</h1>
+                        <p>Track your submitted complaints and their resolution.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="populateComplaintCategorySelect('newComplaintCategory'); openModal('newComplaintModal')">
+                        <i class="fa-solid fa-plus"></i> New Complaint
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="filters-bar" style="margin:0;flex:1">
+                            <input type="text" class="form-input search-input" id="searchMyComplaint" placeholder="Search your complaints..." oninput="filterComplaints()">
+                            <select class="form-select" id="myFilterStatus" onchange="filterComplaints()">
+                                <option value="">All Status</option>
+                                <option value="OPEN">Open</option>
+                                <option value="IN_PROGRESS">In Progress</option>
+                                <option value="RESOLVED">Resolved</option>
+                                <option value="CLOSED">Closed</option>
+                            </select>
+                            <select class="form-select" id="myFilterCategory" onchange="filterComplaints()"></select>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead><tr><th>No.</th><th>Complaint</th><th>Status</th><th>Priority</th><th>AI Tag</th><th>Submitted</th></tr></thead>
+                            <tbody id="myComplaintsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════════════ NOTICES PAGE (shared) ════════════ -->
+            <div class="page" id="page-notices">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Notices &amp; Announcements</h1>
+                        <p>Society-wide updates, events and important information.</p>
+                    </div>
+                    <div id="noticeAdminActions"></div>
+                </div>
+                <div class="filters-bar">
+                    <input type="text" class="form-input search-input" id="searchNotice" placeholder="Search notices..." oninput="filterNotices()">
+                    <select class="form-select" id="filterNoticeType" onchange="filterNotices()">
+                        <option value="">All Types</option>
+                        <option value="GENERAL">General</option>
+                        <option value="URGENT">Urgent</option>
+                        <option value="EVENT">Event</option>
+                        <option value="MAINTENANCE">Maintenance</option>
+                        <option value="MEETING">Meeting</option>
+                    </select>
+                </div>
+                <div id="noticesContainer" class="notice-list"></div>
+            </div>
+
+            <!-- ════════════ ADMIN: MAINTENANCE PAGE ════════════ -->
+            <div class="page" id="page-maintenance">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>Maintenance &amp; Payments</h1>
+                        <p>Track dues, record payments, and manage monthly charges.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('createChargeModal')">
+                        <i class="fa-solid fa-plus"></i> Create Monthly Charges
+                    </button>
+                </div>
+
+                <!-- Maintenance Records -->
+                <div class="card" style="margin-bottom:20px">
+                    <div class="card-header">
+                        <h3>Maintenance Dues</h3>
+                        <div class="filters-bar" style="margin:0">
+                            <input type="text" class="form-input" id="searchMaintenance" placeholder="Search resident..." oninput="filterMaintenance()" style="max-width:200px">
+                            <select class="form-select" id="filterPaymentStatus" onchange="filterMaintenance()" style="max-width:160px">
+                                <option value="">All Status</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="PARTIAL">Partial</option>
+                                <option value="PAID">Paid</option>
+                                <option value="OVERDUE">Overdue</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead><tr><th>Resident</th><th>Month</th><th>Due</th><th>Paid</th><th>Balance</th><th>Status</th><th>Due Date</th><th>Action</th></tr></thead>
+                            <tbody id="maintenanceTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Payments -->
+                <div class="card">
+                    <div class="card-header"><h3>Payment History</h3></div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead><tr><th>Ref #</th><th>Resident</th><th>Amount</th><th>Mode</th><th>Date</th><th>Recorded By</th></tr></thead>
+                            <tbody id="paymentsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════════════ RESIDENT: MY MAINTENANCE PAGE ════════════ -->
+            <div class="page" id="page-my-maintenance">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>My Maintenance Dues</h1>
+                        <p>View your monthly dues and payment history.</p>
+                    </div>
+                </div>
+                <div id="myDueSummary" style="margin-bottom:16px"></div>
+                <div class="card" style="margin-bottom:20px">
+                    <div class="card-header"><h3>Due Records</h3></div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead><tr><th>Month</th><th>Amount Due</th><th>Paid</th><th>Balance</th><th>Status</th><th>Due Date</th></tr></thead>
+                            <tbody id="myMaintenanceTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3>My Payment History</h3></div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead><tr><th>Ref #</th><th>Amount</th><th>Mode</th><th>Date</th><th>Remarks</th></tr></thead>
+                            <tbody id="myPaymentsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════════════ RESIDENT: PROFILE PAGE ════════════ -->
+            <div class="page" id="page-profile">
+                <div class="page-header">
+                    <div class="page-header-left"><h1>My Profile</h1><p>View and update your personal information.</p></div>
+                </div>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-body" style="text-align:center;padding:32px">
+                            <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:grid;place-items:center;color:#fff;font-size:1.8rem;font-weight:700;margin:0 auto 16px" id="profileAvatar">U</div>
+                            <h2 style="font-size:1.2rem" id="profileName">—</h2>
+                            <p class="text-muted" id="profileUnit" style="margin-top:4px">—</p>
+                            <p class="text-muted text-sm" id="profileSociety">—</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3>Edit Profile</h3></div>
+                        <div class="card-body">
+                            <form onsubmit="saveProfile(event)">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" id="pfFullName" class="form-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Phone</label>
+                                        <input type="tel" id="pfPhone" class="form-input">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" id="pfEmail" class="form-input" readonly style="background:var(--surface-2)">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Unit</label>
+                                        <input type="text" id="pfUnit" class="form-input" readonly style="background:var(--surface-2)">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Block</label>
+                                        <input type="text" id="pfBlock" class="form-input" readonly style="background:var(--surface-2)">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Floor</label>
+                                        <input type="number" id="pfFloor" class="form-input" readonly style="background:var(--surface-2)">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Occupancy Type</label>
+                                        <input type="text" id="pfOccupancy" class="form-input" readonly style="background:var(--surface-2)">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Move-In Date</label>
+                                        <input type="text" id="pfMoveIn" class="form-input" readonly style="background:var(--surface-2)">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Emergency Contact Name</label>
+                                        <input type="text" id="pfEmgName" class="form-input" placeholder="Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Emergency Contact Phone</label>
+                                        <input type="tel" id="pfEmgPhone" class="form-input" placeholder="Phone">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="saveProfileBtn"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════════════ ADMIN: REPORTS PAGE ════════════ -->
+            <div class="page" id="page-reports">
+                <div class="page-header">
+                    <div class="page-header-left"><h1>Reports &amp; Analytics</h1><p>Society-level insights and summaries.</p></div>
+                </div>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header"><h3><i class="fa-solid fa-chart-pie" style="color:var(--primary);margin-right:6px"></i>Complaint Summary</h3></div>
+                        <div class="card-body" id="reportComplaintsChart">
+                            <div class="chart-container"><span><i class="fa-solid fa-chart-pie" style="margin-right:8px"></i>Complaint breakdown by status</span></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3><i class="fa-solid fa-chart-bar" style="color:var(--success);margin-right:6px"></i>Collection Summary</h3></div>
+                        <div class="card-body" id="reportCollectionChart">
+                            <div class="chart-container"><span><i class="fa-solid fa-chart-bar" style="margin-right:8px"></i>Monthly collection trend</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top:20px">
+                    <div class="card-header"><h3>Quick Stats</h3></div>
+                    <div class="card-body" id="reportQuickStats">
+                        <div class="text-muted">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div><!-- end main-content -->
+</div><!-- end app-layout -->
+
+<!-- ══════════════════════════════════════════════════════════
+     MODALS
+══════════════════════════════════════════════════════════ -->
+
+<!-- View Complaint -->
+<div class="modal-overlay" id="viewComplaintModal">
+    <div class="modal" style="max-width:680px">
+        <div class="modal-header">
+            <h3>Complaint Details</h3>
+            <button class="modal-close" onclick="closeModal('viewComplaintModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body" id="viewComplaintContent"></div>
+    </div>
+</div>
+
+<!-- Update Complaint (Admin) -->
+<div class="modal-overlay" id="updateComplaintModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Update Complaint <span id="updateComplaintNo" style="color:var(--primary);font-size:.88rem"></span></h3>
+            <button class="modal-close" onclick="closeModal('updateComplaintModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form onsubmit="submitUpdateComplaint(event)">
+                <input type="hidden" id="updateComplaintId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select id="updateStatus" class="form-select" required>
+                            <option value="OPEN">Open</option>
+                            <option value="IN_PROGRESS">In Progress</option>
+                            <option value="RESOLVED">Resolved</option>
+                            <option value="CLOSED">Closed</option>
+                            <option value="REJECTED">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Priority</label>
+                        <select id="updatePriority" class="form-select">
+                            <option value="LOW">Low</option>
+                            <option value="MEDIUM">Medium</option>
+                            <option value="HIGH">High</option>
+                            <option value="CRITICAL">Critical</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Internal Comment</label>
+                    <textarea id="updateComment" class="form-textarea" placeholder="Add a comment about this status change..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Resolution Comment</label>
+                    <textarea id="updateResolution" class="form-textarea" placeholder="Resolution details (shown to resident)..."></textarea>
+                </div>
+                <div class="modal-footer" style="padding:0;border:none;margin-top:8px">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('updateComplaintModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Complaint</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- New Complaint (Resident) -->
+<div class="modal-overlay" id="newComplaintModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-robot" style="color:var(--secondary);margin-right:6px"></i>Submit Complaint</h3>
+            <button class="modal-close" onclick="closeModal('newComplaintModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="alert alert-info" style="margin-bottom:16px">
+                <i class="fa-solid fa-robot"></i>
+                <span>Our AI will automatically categorize and prioritize your complaint.</span>
+            </div>
+            <form id="newComplaintForm" onsubmit="submitNewComplaint(event)">
+                <div class="form-group">
+                    <label class="form-label">Title <span style="color:var(--danger)">*</span></label>
+                    <input type="text" id="newComplaintTitle" class="form-input" placeholder="Brief description of the issue" required minlength="5">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select id="newComplaintCategory" class="form-select">
+                            <option value="">Select category</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Priority</label>
+                        <select id="newComplaintPriority" class="form-select">
+                            <option value="LOW">Low</option>
+                            <option value="MEDIUM" selected>Medium</option>
+                            <option value="HIGH">High</option>
+                            <option value="CRITICAL">Critical</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description <span style="color:var(--danger)">*</span></label>
+                    <textarea id="newComplaintDesc" class="form-textarea" placeholder="Describe your issue in detail..." required minlength="10" style="min-height:110px"></textarea>
+                </div>
+                <div class="modal-footer" style="padding:0;border:none;margin-top:8px">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('newComplaintModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submitComplaintBtn"><i class="fa-solid fa-paper-plane"></i> Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Notice Modal -->
+<div class="modal-overlay" id="noticeModal">
+    <div class="modal" style="max-width:600px">
+        <div class="modal-header">
+            <h3 id="noticeModalTitle">Create Notice</h3>
+            <button class="modal-close" onclick="closeModal('noticeModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="noticeForm" onsubmit="submitNoticeForm(event)">
+                <input type="hidden" id="noticeId">
+                <div class="form-group">
+                    <label class="form-label">Title <span style="color:var(--danger)">*</span></label>
+                    <input type="text" id="noticeTitle" class="form-input" placeholder="Notice title" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Content <span style="color:var(--danger)">*</span></label>
+                    <textarea id="noticeContent" class="form-textarea" placeholder="Notice content..." required style="min-height:140px"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Type</label>
+                        <select id="noticeType" class="form-select">
+                            <option value="GENERAL">General</option>
+                            <option value="URGENT">Urgent</option>
+                            <option value="EVENT">Event</option>
+                            <option value="MAINTENANCE">Maintenance</option>
+                            <option value="MEETING">Meeting</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Publish Date</label>
+                        <input type="datetime-local" id="noticePublishDate" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Expiry Date (optional)</label>
+                    <input type="datetime-local" id="noticeExpiryDate" class="form-input">
+                </div>
+                <div style="display:flex;gap:24px;margin-bottom:16px">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.88rem;color:var(--text-secondary)">
+                        <input type="checkbox" id="noticePinned"> Pin to top
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.88rem;color:var(--text-secondary)">
+                        <input type="checkbox" id="noticePublished"> Publish immediately
+                    </label>
+                </div>
+                <div class="modal-footer" style="padding:0;border:none;margin-top:8px">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('noticeModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveNoticeBtn"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Record Payment Modal -->
+<div class="modal-overlay" id="recordPaymentModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Record Payment</h3>
+            <button class="modal-close" onclick="closeModal('recordPaymentModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:.88rem;color:var(--text-muted);margin-bottom:16px">Resident: <strong id="paymentResidentName">—</strong></p>
+            <form id="recordPaymentForm" onsubmit="submitRecordPayment(event)">
+                <input type="hidden" id="paymentRecordId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Amount (₹) <span style="color:var(--danger)">*</span></label>
+                        <input type="number" id="paymentAmount" class="form-input" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Date <span style="color:var(--danger)">*</span></label>
+                        <input type="date" id="paymentDate" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Payment Mode</label>
+                        <select id="paymentMode" class="form-select">
+                            <option value="CASH">Cash</option>
+                            <option value="UPI">UPI</option>
+                            <option value="BANK_TRANSFER">Bank Transfer</option>
+                            <option value="CHEQUE">Cheque</option>
+                            <option value="ONLINE">Online</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Transaction ID</label>
+                        <input type="text" id="paymentTransactionId" class="form-input" placeholder="UTR / Ref No.">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Remarks</label>
+                    <input type="text" id="paymentRemarks" class="form-input" placeholder="Optional remarks">
+                </div>
+                <div class="modal-footer" style="padding:0;border:none;margin-top:8px">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('recordPaymentModal')">Cancel</button>
+                    <button type="submit" class="btn btn-success" id="savePaymentBtn"><i class="fa-solid fa-indian-rupee-sign"></i> Record Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Create Monthly Charges Modal -->
+<div class="modal-overlay" id="createChargeModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Create Monthly Maintenance Charges</h3>
+            <button class="modal-close" onclick="closeModal('createChargeModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="alert alert-info" style="margin-bottom:16px">
+                <i class="fa-solid fa-info-circle"></i>
+                <span>This will create maintenance records for all active residents.</span>
+            </div>
+            <form id="createChargeForm" onsubmit="submitCreateCharges(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Month (YYYY-MM) <span style="color:var(--danger)">*</span></label>
+                        <input type="month" id="chargeMonth" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Base Amount (₹) <span style="color:var(--danger)">*</span></label>
+                        <input type="number" id="chargeAmount" class="form-input" step="0.01" min="1" placeholder="e.g. 3500" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Late Fee (₹)</label>
+                        <input type="number" id="chargeLateF" class="form-input" step="0.01" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Due Date <span style="color:var(--danger)">*</span></label>
+                        <input type="date" id="chargeDueDate" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="chargeDesc" class="form-textarea" placeholder="Optional description..."></textarea>
+                </div>
+                <div class="modal-footer" style="padding:0;border:none;margin-top:8px">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('createChargeModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveChargeBtn"><i class="fa-solid fa-plus"></i> Create Charges</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Resident Modal -->
+<div class="modal-overlay" id="residentModal">
+    <div class="modal" style="max-width:620px">
+        <div class="modal-header">
+            <h3 id="residentModalTitle">Add Resident</h3>
+            <button class="modal-close" onclick="closeModal('residentModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="residentForm" onsubmit="submitResidentForm(event)">
+                <input type="hidden" id="residentId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Full Name <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="residentFullName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email <span style="color:var(--danger)">*</span></label>
+                        <input type="email" id="residentEmail" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Phone <span style="color:var(--danger)">*</span></label>
+                        <input type="tel" id="residentPhone" class="form-input" pattern="[0-9]{10}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unit Number <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="residentUnit" class="form-input" placeholder="e.g. A-101" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Block</label>
+                        <input type="text" id="residentBlock" class="form-input" placeholder="e.g. A">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Floor</label>
+                        <input type="number" id="residentFloor" class="form-input" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Occupancy Type</label>
+                        <select id="residentOccupancy" class="form-select">
+                            <option value="OWNER">Owner</option>
+                            <option value="TENANT">Tenant</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Move-In Date</label>
+                        <input type="date" id="residentMoveIn" class="form-input">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Emergency Contact Name</label>
+                        <input type="text" id="residentEmergencyName" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Emergency Contact Phone</label>
+                        <input type="tel" id="residentEmergencyPhone" class="form-input">
+                    </div>
+                </div>
+                <div id="residentPasswordGroup">
+                    <div class="form-group">
+                        <label class="form-label">Initial Password</label>
+                        <input type="password" id="residentPassword" class="form-input" placeholder="Leave blank for default: Resident@123">
+                        <p class="form-hint">Default password: <strong>Resident@123</strong></p>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding:0;border:none;margin-top:8px">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('residentModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveResidentBtn"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/complaints.js"></script>
+<script src="js/notices.js"></script>
+<script src="js/maintenance.js"></script>
+<script src="js/residents.js"></script>
+<script src="js/app.js"></script>
+<script>
+    // Post-init hooks
+    document.addEventListener('DOMContentLoaded', () => {
+        const user = Auth.getUser();
+        if (!user) return;
+
+        // Set welcome name
+        const welcomeEl = document.getElementById('dashWelcomeName');
+        if (welcomeEl) welcomeEl.textContent = (user.fullName || user.username).split(' ')[0];
+
+        // Show notices admin actions if admin
+        if (Auth.isAdmin()) {
+            const noticeAdminEl = document.getElementById('noticeAdminActions');
+            if (noticeAdminEl) {
+                noticeAdminEl.innerHTML = `<button class="btn btn-primary" onclick="openCreateNotice()"><i class="fa-solid fa-plus"></i> Create Notice</button>`;
+            }
+        }
+    });
+
+    // Reports quick stats
+    async function loadReports() {
+        try {
+            const res = await Api.dashboard.admin(App.societyId());
+            if (res && res.success) {
+                const d = res.data;
+                document.getElementById('reportQuickStats').innerHTML = `
+                    <div class="stats-grid" style="margin:0">
+                        <div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-users"></i></div><div class="stat-info"><div class="stat-value">${d.totalResidents}</div><div class="stat-label">Total Residents</div></div></div>
+                        <div class="stat-card"><div class="stat-icon red"><i class="fa-solid fa-circle-exclamation"></i></div><div class="stat-info"><div class="stat-value">${d.totalComplaints}</div><div class="stat-label">Total Complaints</div></div></div>
+                        <div class="stat-card"><div class="stat-icon green"><i class="fa-solid fa-indian-rupee-sign"></i></div><div class="stat-info"><div class="stat-value">${formatCurrency(d.monthlyCollections)}</div><div class="stat-label">Monthly Collections</div></div></div>
+                        <div class="stat-card"><div class="stat-icon orange"><i class="fa-solid fa-file-invoice-dollar"></i></div><div class="stat-info"><div class="stat-value">${formatCurrency(d.pendingAmount)}</div><div class="stat-label">Pending Dues</div></div></div>
+                    </div>`;
+                document.getElementById('reportComplaintsChart').innerHTML = `
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:center">
+                        <div style="padding:16px;background:var(--danger-light);border-radius:var(--radius-sm)"><div style="font-size:2rem;font-weight:700;color:var(--danger)">${d.openComplaints}</div><div style="font-size:.82rem;color:var(--text-muted)">Open</div></div>
+                        <div style="padding:16px;background:var(--warning-light);border-radius:var(--radius-sm)"><div style="font-size:2rem;font-weight:700;color:var(--warning)">${d.inProgressComplaints}</div><div style="font-size:.82rem;color:var(--text-muted)">In Progress</div></div>
+                        <div style="padding:16px;background:var(--success-light);border-radius:var(--radius-sm)"><div style="font-size:2rem;font-weight:700;color:var(--success)">${d.resolvedComplaints}</div><div style="font-size:.82rem;color:var(--text-muted)">Resolved</div></div>
+                    </div>`;
+                document.getElementById('reportCollectionChart').innerHTML = `
+                    <div style="text-align:center;padding:24px">
+                        <div style="font-size:2.5rem;font-weight:800;color:var(--success)">${formatCurrency(d.monthlyCollections)}</div>
+                        <div style="color:var(--text-muted);margin-top:6px">Collected this month</div>
+                        <div style="margin-top:16px;padding:12px;background:var(--danger-light);border-radius:var(--radius-sm)">
+                            <div style="font-size:1.4rem;font-weight:700;color:var(--danger)">${formatCurrency(d.pendingAmount)}</div>
+                            <div style="font-size:.82rem;color:var(--text-muted)">Outstanding dues</div>
+                        </div>
+                    </div>`;
+            }
+        } catch { Toast.error('Failed to load reports.'); }
+    }
+</script>
+</body>
+</html>
